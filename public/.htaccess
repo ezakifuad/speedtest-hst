@@ -1,0 +1,2 @@
+RewriteEngine On
+RewriteRule ^result/([a-f0-9]{32})/?$ result.php?id=$1 [L,QSA]

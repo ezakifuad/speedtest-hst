@@ -1,0 +1,8 @@
+.env
+.env.*
+!.env.example
+backups/
+.deploy.lock
+.DS_Store
+*.log
+*.zip

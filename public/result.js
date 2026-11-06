@@ -1,0 +1,1 @@
+document.getElementById('share').onclick=async()=>{try{await navigator.clipboard.writeText(location.href);document.getElementById('share-status').textContent='Tautan disalin';}catch(e){document.getElementById('share-status').textContent='Salin alamat halaman dari browser.';}};

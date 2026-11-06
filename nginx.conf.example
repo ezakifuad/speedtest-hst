@@ -1,0 +1,30 @@
+limit_req_zone $binary_remote_addr zone=hst_admin:10m rate=5r/m;
+
+# Pasang pada Nginx host. Sertifikat TLS harus disiapkan untuk domain ini.
+server {
+    listen 80;
+    server_name speedtest.hstkab.go.id;
+    return 301 https://$host$request_uri;
+}
+server {
+    listen 443 ssl;
+    server_name speedtest.hstkab.go.id;
+    ssl_certificate /etc/letsencrypt/live/speedtest.hstkab.go.id/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/speedtest.hstkab.go.id/privkey.pem;
+    client_max_body_size 64m;
+    gzip off;
+    location / {
+        proxy_pass http://127.0.0.1:8093;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_buffering off;
+        proxy_request_buffering off;
+        proxy_read_timeout 120s;
+    }
+    location = /admin.php {
+        limit_req zone=hst_admin burst=5 nodelay;
+        proxy_pass http://127.0.0.1:8093;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}

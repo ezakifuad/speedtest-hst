@@ -1,0 +1,8 @@
+[
+  {
+    "id": "hst",
+    "name": "Server HST",
+    "city": "Server aplikasi ini",
+    "base": "/vendor/backend/"
+  }
+]

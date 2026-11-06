@@ -1,0 +1,10 @@
+CREATE TABLE results (
+ id CHAR(32) PRIMARY KEY,
+ tested_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ skpd VARCHAR(120) NOT NULL,
+ download DECIMAL(12,2) NOT NULL,
+ upload DECIMAL(12,2) NOT NULL,
+ ping DECIMAL(12,2) NOT NULL,
+ jitter DECIMAL(12,2) NOT NULL,
+ INDEX idx_date (tested_at), INDEX idx_skpd (skpd)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

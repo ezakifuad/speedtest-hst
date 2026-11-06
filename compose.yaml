@@ -1,0 +1,39 @@
+services:
+  web:
+    build: .
+    restart: unless-stopped
+    ports: ["127.0.0.1:8093:80"]
+    environment:
+      DB_HOST: db
+      DB_NAME: speedtest
+      DB_USER: speedtest
+      DB_PASSWORD: ${DB_PASSWORD:?Isi DB_PASSWORD di .env}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Isi ADMIN_PASSWORD di .env}
+      APP_HTTPS: ${APP_HTTPS:-0}
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-}
+    healthcheck:
+      test: ["CMD", "php", "-r", "exit(@file_get_contents('http://127.0.0.1/health.php') === '{\"status\":\"ok\"}' ? 0 : 1);"]
+      interval: 15s
+      timeout: 5s
+      retries: 8
+      start_period: 15s
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: mariadb:11.4
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: speedtest
+      MARIADB_USER: speedtest
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Isi DB_ROOT_PASSWORD di .env}
+    volumes:
+      - database:/var/lib/mysql
+      - ./database:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      retries: 30
+volumes:
+  database:
